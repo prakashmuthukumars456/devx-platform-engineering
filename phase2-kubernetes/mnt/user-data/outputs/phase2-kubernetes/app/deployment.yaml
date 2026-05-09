@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+  namespace: devx
+spec:
+  replicas: 2               # run 2 pods — K8s load balances between them
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+        - name: fastapi-app
+          # Uses the image you built in Phase 1
+          # Docker Desktop K8s can access local images directly
+          image: fastapi-k8s-app-app:latest
+          imagePullPolicy: Never      # use local image, don't pull from registry
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: app-config      # loads ALL keys from configmap as env vars
+            - secretRef:
+                name: app-secret      # loads ALL keys from secret as env vars
+
+          # ── Liveness probe ────────────────────────────────────────────────
+          # K8s restarts the pod if this fails
+          # Maps to your /health/live endpoint from Phase 1
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8000
+            initialDelaySeconds: 15   # wait 15s before first check
+            periodSeconds: 20         # check every 20s
+            failureThreshold: 3       # restart after 3 failures
+
+          # ── Readiness probe ───────────────────────────────────────────────
+          # K8s stops sending traffic if this fails (but doesn't restart)
+          # Maps to your /health/ready endpoint from Phase 1
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8000
+            initialDelaySeconds: 20   # wait longer — DB needs to be ready first
+            periodSeconds: 10
+            failureThreshold: 3
+
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"             # 100 millicores = 0.1 CPU
+            limits:
+              memory: "256Mi"
+              cpu: "500m"             # max 0.5 CPU per pod
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+  namespace: devx
+spec:
+  selector:
+    app: fastapi-app
+  ports:
+    - port: 80              # external port
+      targetPort: 8000      # pod port
+  type: LoadBalancer        # exposes to your laptop on localhost
