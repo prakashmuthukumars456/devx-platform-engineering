@@ -1,5 +1,7 @@
 # Helm chart — fastapi-app
 
+<img width="717" height="247" alt="image" src="https://github.com/user-attachments/assets/f9761f3e-905d-434a-b3ca-238d00ce5f06" />
+
 Helm wraps all manifests into one reusable chart.
 Same chart deploys to dev, staging, and prod — only values differ.
 
@@ -73,3 +75,28 @@ Then install via Helm:
 helm install devx-app ./fastapi-app -f values-dev.yaml
 kubectl get pods -n devx -w
 ```
+
+## The full hierarchy with your Helm setup
+
+Cluster                         → the whole K8s environment
+  └── Node (docker-desktop)     → the one machine
+        └── Namespace (devx)    → logical isolation
+              └── Helm release (devx-app)   → owns everything below
+                    ├── Deployment: fastapi-app
+                    │     ├── Pod 1 (replica 1)
+                    │     │     └── Container: fastapi-k8s-app-app:latest
+                    │     └── Pod 2 (replica 2)
+                    │           └── Container: fastapi-k8s-app-app:latest
+                    ├── Deployment: postgres
+                    │     └── Pod → Container: postgres:16-alpine
+                    ├── Deployment: redis
+                    │     └── Pod → Container: redis:7-alpine
+                    ├── ConfigMap: app-config
+                    ├── Secret: app-secret
+                    └── PVC: postgres-pvc
+
+## Phase 2 vs Phase 4
+<img width="645" height="518" alt="image" src="https://github.com/user-attachments/assets/00cec687-a1f8-41a5-8a4d-403900c2092d" />
+
+## The full chain with all components
+<img width="681" height="535" alt="image" src="https://github.com/user-attachments/assets/01bf89dd-78a1-415c-88ce-df9c3683e748" />
