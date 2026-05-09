@@ -1,0 +1,6 @@
+apiVersion: v2
+name: fastapi-app
+description: FastAPI app with PostgreSQL and Redis — DevX Platform Engineering
+type: application
+version: 0.1.0      # chart version — bump this when you change the chart
+appVersion: "1.0.0" # your app version — bump this when you deploy new app code

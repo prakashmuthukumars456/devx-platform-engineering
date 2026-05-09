@@ -1,0 +1,11 @@
+# ── Dev environment overrides ─────────────────────────────────────────────────
+# Only specify what differs from values.yaml
+
+app:
+  replicas: 1           # save resources in dev
+  image:
+    pullPolicy: Never   # local image
+
+config:
+  APP_ENV: "development"
+  DEBUG: "true"

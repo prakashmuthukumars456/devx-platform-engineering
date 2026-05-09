@@ -1,0 +1,56 @@
+# ── Default values for fastapi-app chart ─────────────────────────────────────
+# Override these per environment using values-dev.yaml or values-prod.yaml
+# Usage: helm install myapp ./fastapi-app -f values-dev.yaml
+
+namespace: devx
+
+# ── FastAPI app ───────────────────────────────────────────────────────────────
+app:
+  replicas: 2
+  image:
+    repository: fastapi-k8s-app-app
+    tag: latest
+    pullPolicy: Never       # use local image — change to Always for prod/EKS
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 8000
+
+# ── PostgreSQL ────────────────────────────────────────────────────────────────
+postgres:
+  image: postgres:16-alpine
+  storage: 1Gi
+  service:
+    port: 5432
+
+# ── Redis ─────────────────────────────────────────────────────────────────────
+redis:
+  image: redis:7-alpine
+  maxMemory: 128mb
+  service:
+    port: 6379
+
+# ── ConfigMap (non-sensitive env vars) ───────────────────────────────────────
+config:
+  APP_NAME: "fastapi-k8s-app"
+  APP_VERSION: "1.0.0"
+  APP_ENV: "development"
+  DEBUG: "true"
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "appdb"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+
+# ── Secrets (sensitive — override in CI/CD, never commit real values) ─────────
+secrets:
+  POSTGRES_USER: "appuser"
+  POSTGRES_PASSWORD: "apppassword"
+  REDIS_PASSWORD: "redispassword"
