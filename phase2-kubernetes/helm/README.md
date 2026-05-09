@@ -78,6 +78,8 @@ kubectl get pods -n devx -w
 
 ## The full hierarchy with your Helm setup
 
+<img width="652" height="396" alt="image" src="https://github.com/user-attachments/assets/7cf16e9b-0f67-4b17-a486-97340bd2fe28" />
+
 Cluster                         → the whole K8s environment
   └── Node (docker-desktop)     → the one machine
         └── Namespace (devx)    → logical isolation
