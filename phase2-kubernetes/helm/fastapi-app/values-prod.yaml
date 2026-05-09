@@ -1,0 +1,19 @@
+# ── Prod environment overrides ────────────────────────────────────────────────
+# Only specify what differs from values.yaml
+
+app:
+  replicas: 3
+  image:
+    repository: YOUR_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/fastapi-k8s-app
+    tag: "1.0.0"        # pin to specific tag in prod, never use latest
+    pullPolicy: Always  # always pull from registry in prod
+
+postgres:
+  storage: 10Gi         # more storage in prod
+
+config:
+  APP_ENV: "production"
+  DEBUG: "false"        # disable swagger in prod
+
+# secrets in prod come from AWS Secrets Manager, not this file
+# see phase4-eks for the setup

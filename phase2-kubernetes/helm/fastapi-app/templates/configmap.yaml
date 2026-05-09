@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "fastapi-app.labels" . | nindent 4 }}
+data:
+  # {{ .Values.config }} is the config block from values.yaml
+  # toYaml converts it to YAML, nindent 2 adds 2-space indent
+  {{- toYaml .Values.config | nindent 2 }}
