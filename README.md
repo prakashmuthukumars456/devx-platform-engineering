@@ -15,3 +15,7 @@ Kubernetes, infrastructure as code, and SDLC automation.
 ## Stack
 Docker · Kubernetes · Terraform · AWS EKS · 
 FastAPI · PostgreSQL · Redis · Atlassian Rovo Dev
+
+
+
+<img width="817" height="537" alt="image" src="https://github.com/user-attachments/assets/bbcd3888-a968-4275-b32d-f69bddfd1c60" />
