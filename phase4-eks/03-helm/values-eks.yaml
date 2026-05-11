@@ -1,0 +1,41 @@
+# ── EKS values — overrides values.yaml for real AWS deployment ───────────────
+# Used with: helm install devx-app ./fastapi-app -f values-eks.yaml -n devx
+
+namespace: devx
+
+app:
+  replicas: 2
+  image:
+    # Replace with your ECR URL from: terraform output repository_url
+    repository: 443938285767.dkr.ecr.us-east-1.amazonaws.com/devx-dev-app
+    tag: "latest"
+    pullPolicy: Always    # always pull from ECR — not local image
+
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+  service:
+    type: LoadBalancer    # AWS creates an ELB automatically
+    port: 80
+    targetPort: 8000
+
+config:
+  APP_ENV: "production"
+  DEBUG: "false"          # hide /docs in production
+  # POSTGRES_HOST comes from RDS endpoint
+  # Update this after terraform output db_endpoint
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "appdb"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+
+secrets:
+  POSTGRES_USER: "appuser"
+  POSTGRES_PASSWORD: "DevxPassword123!"
+  REDIS_PASSWORD: "redispassword"
