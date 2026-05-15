@@ -10,7 +10,7 @@ Kubernetes, infrastructure as code, and SDLC automation.
 | 2 - Kubernetes | Docker Desktop K8s, manifests, Helm | ✅ Done |
 | 3 - Terraform | AWS VPC, EC2, RDS | ✅ Done |
 | 4 - EKS | Terraform + EKS cluster | ✅ Done |
-| 5 - Rovo Dev | Jira ↔ code ↔ docs SDLC automation | 🔄 In progress |
+| 5 - Rovo Dev | Jira ↔ code ↔ docs SDLC automation | ✅ Done |
 
 ## Stack
 Docker · Kubernetes · Terraform · AWS EKS · 
