@@ -132,18 +132,6 @@ feature/DEVX-1-liveness-probe
 
 ---
 
-## Project Phase Summary
-
-| Phase | Focus | Status |
-|-------|-------|--------|
-| 1 — Docker | Multi-stage builds, Compose, health probes | ✅ Done |
-| 2 — Kubernetes | Docker Desktop K8s, manifests, Helm | ✅ Done |
-| 3 — Terraform | AWS VPC, EC2, S3 backend, RDS | ✅ Done |
-| 4 — EKS | Terraform + EKS cluster, ECR, Helm on AWS | ✅ Done |
-| 5 — Rovo Dev | Jira ↔ GitHub ↔ Confluence SDLC automation | ✅ Done |
-
----
-
 ## Links
 
 - Jira Project: https://prakashmuthukumars456.atlassian.net/jira/software/projects/DEVX/boards/34
