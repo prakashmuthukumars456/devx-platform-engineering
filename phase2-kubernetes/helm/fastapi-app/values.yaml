@@ -54,3 +54,4 @@ secrets:
   POSTGRES_USER: "appuser"
   POSTGRES_PASSWORD: "apppassword"
   REDIS_PASSWORD: "redispassword"
+# DEVX-1: liveness probe config verified
