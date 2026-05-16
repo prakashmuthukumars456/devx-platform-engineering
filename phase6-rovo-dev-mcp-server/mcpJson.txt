@@ -1,0 +1,89 @@
+## mcp.json
+
+{
+  "servers": {
+    "atlassian-mcp-server": {
+      "url": "https://mcp.atlassian.com/v1/mcp/authv2",
+      "type": "http"
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp",
+      "headers": {
+        "DD-API-KEY": "248dd6401e0c1b646fc133419e00e4a8",
+        "DD-APPLICATION-KEY": "ddapp_uxCJa4B7TnHaBNj2ngge6mfVHGYd0WNNF8"
+      }
+    }
+  },
+  "inputs": []
+}
+
+## claude_desktop_config.json
+
+
+{
+  "mcpServers": {
+    "weather": {
+      "command": "C:\\Personal_Projects\\mcp-servers\\venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Personal_Projects\\mcp-servers\\weather-server.py"
+      ]
+    },
+    "ado": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "NAF-Tech",
+        "-d",
+        "core",
+        "work",
+        "work-items"
+      ],
+      "env": {
+        "AZURE_DEVOPS_TOKEN": "Cuo2qzFVgoUAg0uhKjrAASAZDOQfx4"
+      }
+    },
+    "newrelic-local": {
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "c:\\Users\\Prakash.M\\Downloads\\nr-mcp\\nr-mcp\\nr-mcp-server\\build\\index.js"
+      ],
+      "env": {
+        "NEW_RELIC_API_KEY": "NRAK-",
+        "NEW_RELIC_ACCOUNT_ID": "4500785",
+        "NEW_RELIC_REGION": "US"
+      }
+    },
+	"atlassian-mcp-server": {
+      "url": "https://mcp.atlassian.com/v1/mcp/authv2",
+      "type": "http"
+    },
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp",
+      "headers": {
+        "DD-API-KEY": "248dd6401e0c1b646fc133419e00e4a8",
+        "DD-APPLICATION-KEY": "ddapp_uxCJa4B7TnHaBNj2ngge6mfVHGYd0WNNF8"
+      }
+    }
+  },
+  "preferences": {
+    "coworkScheduledTasksEnabled": true,
+    "ccdScheduledTasksEnabled": true,
+    "sidebarMode": "task",
+    "coworkWebSearchEnabled": true,
+    "remoteToolsDeviceName": "lt-ind-6kkissav",
+    "epitaxyPrefs": {
+      "starred-local-code-sessions": [],
+      "starred-cowork-spaces": [],
+      "starred-session-groups": [],
+      "dframe-local-slice": {
+        "pinnedOrder": [],
+        "customGroupAssignments": {},
+        "customGroupOrder": {}
+      }
+    }
+  }
+}
+
