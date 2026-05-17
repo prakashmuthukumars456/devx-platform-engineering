@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [datadog-alert]
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   diagnose-and-fix:
     runs-on: [self-hosted, devx-local]
