@@ -1,0 +1,92 @@
+name: SRE Auto-Remediation
+
+on:
+  repository_dispatch:
+    types: [datadog-alert]
+
+jobs:
+  diagnose-and-fix:
+    runs-on: [self-hosted, devx-local]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Issue
+        id: create_issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const p = context.payload.client_payload;
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[P1 INCIDENT] ${p.monitor}`,
+              body: `## 🚨 Incident Detected\n\n**Monitor:** ${p.monitor}\n**Host:** ${p.host}\n**Container:** ${p.container}\n**Time:** ${new Date().toISOString()}\n\n⏳ SRE agent is diagnosing via Datadog + Claude...`,
+              labels: ['incident', 'P1', 'auto-remediation']
+            });
+            console.log(`Issue created: #${issue.data.number}`);
+            return issue.data.number;
+          result-encoding: string
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Diagnose via Datadog + Claude
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CONTAINER: ${{ github.event.client_payload.container }}
+        run: python .github/scripts/sre_agent.py
+
+      - name: Remediate — Restart Container
+        run: |
+          CONTAINER="${{ github.event.client_payload.container }}"
+          echo "Restarting $CONTAINER..."
+          cd ~/devx-platform-engineering/phase1-docker
+          docker compose -f docker-compose.datadog.yml start $CONTAINER 2>/dev/null || \
+          docker start $CONTAINER 2>/dev/null || \
+          echo "REMEDIATION_FAILED=true" >> $GITHUB_ENV
+
+      - name: Verify Recovery
+        run: |
+          sleep 15
+          CONTAINER="${{ github.event.client_payload.container }}"
+          STATUS=$(docker inspect --format='{{.State.Status}}' $CONTAINER 2>/dev/null || echo "not_found")
+          echo "CONTAINER_STATUS=$STATUS" >> $GITHUB_ENV
+          echo "Container status after restart: $STATUS"
+
+      - name: Post RCA and Close Issue
+        uses: actions/github-script@v7
+        env:
+          DIAGNOSIS: ${{ env.DIAGNOSIS }}
+          CONTAINER_STATUS: ${{ env.CONTAINER_STATUS }}
+        with:
+          script: |
+            const issueNumber = parseInt(${{ steps.create_issue.outputs.result }});
+            const status = process.env.CONTAINER_STATUS;
+            const diagnosis = process.env.DIAGNOSIS;
+            const recovered = status === 'running';
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `## 🤖 SRE Agent Report\n\n**Container Status:** \`${status}\`\n\n### Root Cause Analysis (Claude)\n${diagnosis}\n\n### Actions Taken\n1. Queried Datadog logs and metrics\n2. Claude analysed telemetry\n3. Container restart executed\n4. Recovery verified\n\n**Result:** ${recovered ? '✅ RECOVERED — closing issue' : '❌ FAILED — manual intervention needed'}`
+            });
+
+            if (recovered) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                state: 'closed',
+                labels: ['incident', 'P1', 'auto-remediation', 'resolved']
+              });
+            }
