@@ -54,7 +54,7 @@ jobs:
           CONTAINER="${{ github.event.client_payload.container }}"
           echo "Restarting $CONTAINER..."
           cd ~/devx-platform-engineering/phase1-docker
-          docker compose -f docker-compose.datadog.yml start $CONTAINER 2>/dev/null || \
+          docker start $CONTAINER 2>/dev/null ||
           docker start $CONTAINER 2>/dev/null || \
           echo "REMEDIATION_FAILED=true" >> $GITHUB_ENV
 
