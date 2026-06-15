@@ -14,19 +14,13 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Install dependencies
         run: pip install -r requirements.txt --break-system-packages
+        working-directory: /home/silk/devx-platform-engineering/phase8-freight-sre-loop
 
       - name: Run Freight SRE Agent
         run: python3 sre_agent.py
+        working-directory: /home/silk/devx-platform-engineering/phase8-freight-sre-loop
         env:
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -39,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: postmortem-${{ github.run_id }}
-          path: postmortem_*.json
+          path: /home/silk/devx-platform-engineering/phase8-freight-sre-loop/postmortem_*.json
