@@ -3,8 +3,8 @@ name: Freight SRE - Autonomous Incident Response
 
 on:
   repository_dispatch:
-    types: [freight-alert]   # different event type from Phase 7's "datadog-alert"
-  workflow_dispatch:          # manual trigger for demo/testing
+    types: [freight-alert]
+  workflow_dispatch:
 
 permissions:
   issues: write
@@ -12,8 +12,8 @@ permissions:
 
 jobs:
   freight-sre-loop:
-    runs-on: self-hosted      # same devx-local runner, no change needed
-    
+    runs-on: self-hosted
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -36,6 +36,8 @@ jobs:
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          TRACKING_API_URL: http://localhost:8000
+          ALERT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
 
       - name: Upload postmortem artifact
         if: always()
