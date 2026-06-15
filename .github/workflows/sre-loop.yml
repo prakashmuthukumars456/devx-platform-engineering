@@ -24,11 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt --break-system-packages
-        working-directory: phase8-freight-sre-loop
 
       - name: Run Freight SRE Agent
         run: python3 sre_agent.py
-        working-directory: phase8-freight-sre-loop
         env:
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -41,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: postmortem-${{ github.run_id }}
-          path: phase8-freight-sre-loop/postmortem_*.json
+          path: postmortem_*.json
